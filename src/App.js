@@ -10,9 +10,6 @@ function App() {
     lat: 0,
   });
   const [count, setCount] = useState(0);
-
-  // let coords = { lon: 0, lat: 0 };
-
   const [weather, setWeather] = useState([]);
   const [time, setTime] = useState(false);
   const [city, setCity] = useState("");
@@ -95,6 +92,7 @@ function App() {
       arr = [...weatherData];
       arr.shift();
       // console.log(arr);
+      console.log(coords);
 
       return "success";
     };
