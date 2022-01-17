@@ -3,45 +3,46 @@ import { Container, Row, Col } from "react-bootstrap";
 import WeatherNow from "./components/WeatherNow";
 import { useEffect, useState } from "react";
 import loadingimage from "./assets/Shower.png";
+import GlobalState from "./state/global-state";
 
 function App() {
   const [coords, setCoords] = useState({
     lon: 0,
     lat: 0,
   });
-  const [count, setCount] = useState(0);
   const [weather, setWeather] = useState([]);
   const [time, setTime] = useState(false);
   const [city, setCity] = useState("");
   let arr = [];
 
-  useEffect(() => {
-    const findCurrentLocationPromise = () => {
-      return new Promise((resolve) => {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            // console.log("mpike mesa");
-            const longitude = position.coords.longitude;
-            const latitude = position.coords.latitude;
-            // console.log(latitude, longitude);
-            setCoords({ lon: longitude, lat: latitude });
-            console.log(longitude, latitude);
+  // useEffect(() => {
+  const findCurrentLocationPromise = () => {
+    return new Promise((resolve) => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          // console.log("mpike mesa");
+          const longitude = position.coords.longitude;
+          const latitude = position.coords.latitude;
+          // console.log(latitude, longitude);
+          setCoords({ lon: longitude, lat: latitude });
+          console.log(coords);
+          // console.log(longitude, latitude);
 
-            // console.log(lat, lon);
-            // console.log(coords);
-          },
-          () => {
-            alert("Could not get your location");
-          }
-        );
-        if (navigator.geolocation) {
-          resolve("success");
           // console.log(lat, lon);
+          // console.log(coords);
+        },
+        () => {
+          alert("Could not get your location");
         }
-      });
-    };
-    findCurrentLocationPromise();
-  }, []);
+      );
+      if (navigator.geolocation) {
+        resolve("success");
+        // console.log(lat, lon);
+      }
+    });
+  };
+  findCurrentLocationPromise();
+  // }, []);
 
   useEffect(() => {
     const fetchCurrentLocation = async () => {
@@ -49,7 +50,7 @@ function App() {
       const response = await fetch(
         `https://www.metaweather.com/api/location/search/?lattlong=${coords.lat},${coords.lon}`
       );
-      console.log("fetchcurrentlocation");
+      // console.log("fetchcurrentlocation");
       if (!response.ok) {
         throw new Error("Something went wrong!");
       }
@@ -87,48 +88,47 @@ function App() {
       );
 
       setWeather(weatherData);
+      console.log(weatherData);
       setCity(cityData);
-      // console.log(cityData);
+      console.log(cityData);
       arr = [...weatherData];
       arr.shift();
       // console.log(arr);
-      console.log(coords);
+      // console.log(coords);
+      // setCount(count + 1);
 
       return "success";
     };
 
     fetchCurrentLocation();
-    setCount(count + 1);
 
     return () => {
-      // setTime(false);
+      setTime(false);
     };
   }, [coords]);
 
   setTimeout(() => setTime(true), 2000);
-  console.log(count);
 
   return (
-    <Container className="main-body">
-      <Row>
-        {time ? (
-          <Col className="weather-now" md={4} sm={4}>
-            <WeatherNow
-              weatherData={weather}
-              cityName={city}
-              latitude={coords.lat}
-              longitude={coords.lon}
-            />
-          </Col>
-        ) : (
-          <Col md={12} className="intro">
-            <h1>Weather Forecast</h1>
-            <img src={loadingimage} />
-          </Col>
-        )}
-        <Col md={8} sm={8}></Col>
-      </Row>
-    </Container>
+    <GlobalState.Provider
+      value={{ weather: weather, city: city, coords: coords }}
+    >
+      <Container className="main-body">
+        <Row>
+          {time ? (
+            <Col className="weather-now" md={4} sm={4}>
+              <WeatherNow />
+            </Col>
+          ) : (
+            <Col md={12} className="intro">
+              <h1>Weather Forecast</h1>
+              <img src={loadingimage} />
+            </Col>
+          )}
+          <Col md={8} sm={8}></Col>
+        </Row>
+      </Container>
+    </GlobalState.Provider>
   );
 }
 

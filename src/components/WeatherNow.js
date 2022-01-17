@@ -2,10 +2,12 @@ import { Button, Container, Row, Col } from "react-bootstrap";
 import styles from "./WeatherNow.module.css";
 import { BiCurrentLocation } from "react-icons/bi";
 import { IoLocationSharp } from "react-icons/io5";
+import { useContext } from "react";
+import GlobalState from "../state/global-state";
 
 const WeatherNow = (props) => {
-  // console.log(longitude);
   const locationHandler = () => {};
+  const ctx = useContext(GlobalState);
 
   return (
     <Container className={styles.container}>
@@ -21,20 +23,20 @@ const WeatherNow = (props) => {
             />
           </div>
           <img
-            src={require(`../assets/${props.weatherData[0].weather
+            src={require(`../assets/${ctx.weather[0].weather
               .split(" ")
               .join("")}.png`)}
             alt="image"
             className={styles.image}
           />
           <div className={styles.temp}>
-            {Math.round(props.weatherData[0].averageTemp)}
+            {Math.round(ctx.weather[0].averageTemp)}
             <span className={styles.celcius}>℃</span>
           </div>
-          <p className={styles.weather}>{props.weatherData[0].weather}</p>
+          <p className={styles.weather}>{ctx.weather[0].weather}</p>
           <div className={styles.city}>
             <IoLocationSharp />
-            <p>{props.cityName}</p>
+            <p>{ctx.city}</p>
           </div>
         </Col>
       </Row>
