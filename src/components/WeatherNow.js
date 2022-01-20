@@ -6,8 +6,11 @@ import { useContext } from "react";
 import GlobalState from "../state/global-state";
 
 const WeatherNow = (props) => {
-  const locationHandler = () => {};
   const ctx = useContext(GlobalState);
+  const locationHandler = () => {
+    ctx.clickToGetLocationHandler();
+    console.log(ctx.city);
+  };
 
   return (
     <Container className={styles.container}>
@@ -22,18 +25,12 @@ const WeatherNow = (props) => {
               onClick={locationHandler}
             />
           </div>
-          <img
-            src={require(`../assets/${ctx.weather[0].weather
-              .split(" ")
-              .join("")}.png`)}
-            alt="image"
-            className={styles.image}
-          />
+          <img src={ctx.source} alt="image" className={styles.image} />
           <div className={styles.temp}>
-            {Math.round(ctx.weather[0].averageTemp)}
+            {ctx.avgTemp}
             <span className={styles.celcius}>℃</span>
           </div>
-          <p className={styles.weather}>{ctx.weather[0].weather}</p>
+          <p className={styles.weather}>{ctx.weatherNow}</p>
           <div className={styles.city}>
             <IoLocationSharp />
             <p>{ctx.city}</p>
