@@ -1,0 +1,9 @@
+/* .container {
+  display: flex;
+} */
+
+.container {
+  background-color: #1e213a;
+  width: 120px;
+  height: 177px;
+}

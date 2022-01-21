@@ -1,0 +1,13 @@
+/* .container {
+  display: flex;
+  justify-content: space-between;
+} */
+
+.container {
+  display: flex;
+  margin-top: 148px;
+  align-content: center;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  margin-left: 50px;
+}

@@ -57,7 +57,7 @@
   line-height: 169px;
   color: #e7e7eb;
   margin-top: 87px;
-  margin-left: 180px;
+  margin-left: 150px;
   font-family: "Raleway", sans-serif;
 }
 
@@ -92,6 +92,25 @@
 }
 
 .city p {
+  margin: 0px;
+  font-family: Raleway;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 21px;
+
+  color: #88869d;
+}
+
+.date {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #88869d;
+  margin-bottom: 10px;
+}
+
+.date p {
   margin: 0px;
   font-family: Raleway;
   font-style: normal;

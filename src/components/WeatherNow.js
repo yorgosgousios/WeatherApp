@@ -2,14 +2,13 @@ import { Button, Container, Row, Col } from "react-bootstrap";
 import styles from "./WeatherNow.module.css";
 import { BiCurrentLocation } from "react-icons/bi";
 import { IoLocationSharp } from "react-icons/io5";
-import { useContext } from "react";
-import GlobalState from "../state/global-state";
+import image from "../assets/Hail.png";
+import { useState } from "react";
 
 const WeatherNow = (props) => {
-  const ctx = useContext(GlobalState);
   const locationHandler = () => {
-    ctx.clickToGetLocationHandler();
-    console.log(ctx.city);
+    props.findCurrentLocationPromise();
+    console.log(props.city);
   };
 
   return (
@@ -25,15 +24,23 @@ const WeatherNow = (props) => {
               onClick={locationHandler}
             />
           </div>
-          <img src={ctx.source} alt="image" className={styles.image} />
+          <img src={props.source} alt="image" className={styles.image} />
           <div className={styles.temp}>
-            {ctx.avgTemp}
+            {props.avgTemp}
             <span className={styles.celcius}>℃</span>
           </div>
-          <p className={styles.weather}>{ctx.weatherNow}</p>
+          <p className={styles.weather}>{props.weatherNow}</p>
+          <p className={styles.date}>
+            Today •
+            {props.weather[0]?.date.toLocaleString("en-US", {
+              weekday: "short",
+              day: "numeric",
+              month: "short",
+            })}
+          </p>
           <div className={styles.city}>
             <IoLocationSharp />
-            <p>{ctx.city}</p>
+            <p>{props.city}</p>
           </div>
         </Col>
       </Row>

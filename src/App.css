@@ -67,3 +67,22 @@ body {
 .intro img {
   width: 500px;
 }
+
+.list-item {
+  list-style: none;
+}
+
+.title-highlights {
+  margin-top: 72px;
+  margin-left: 154px;
+  font-family: Raleway;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 24px;
+  line-height: 28px;
+  color: #e7e7eb;
+}
+
+.second {
+  padding: 0;
+}
