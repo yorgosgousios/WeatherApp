@@ -1,0 +1,30 @@
+.container {
+  width: 328px;
+  height: 204px;
+  background: #1e213a;
+}
+
+.container p {
+  font-family: Raleway;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 19px;
+  /* identical to box height */
+
+  text-align: center;
+
+  color: #e7e7eb;
+  margin-top: 22px;
+}
+
+.container h1 {
+  font-family: Raleway;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 60px;
+  line-height: 75px;
+
+  color: #e7e7eb;
+  text-align: center;
+}

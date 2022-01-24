@@ -1,24 +1,25 @@
 import "./App.css";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, ProgressBar } from "react-bootstrap";
 import WeatherNow from "./components/WeatherNow";
 import { useState, useEffect } from "react";
 
 import loadingimage from "./assets/Shower.png";
 import WeatherBox from "./components/WeatherBox";
+import TodaysHighlights from "./components/TodaysHighlights";
 
 function App() {
   //states and variables
+  // console.log("App running");
   const [weather, setWeather] = useState([]);
   const [futureWeather, setFutureWeather] = useState([]);
   const [city, setCity] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [source, setSource] = useState(``);
-  const [weatherNow, setWeatherNow] = useState("");
-  const [avgTemp, setAvgTemp] = useState(0);
   const [coords, setCoords] = useState({
-    lon: 0,
-    lat: 0,
+    lon: null,
+    lat: null,
   });
+  const [input, setInput] = useState("");
 
   let arr = [];
 
@@ -42,7 +43,60 @@ function App() {
   };
   findCurrentLocationPromise();
 
-  //useEffects
+  const fetchWeather = async (woeid) => {
+    const response = await fetch(
+      `https://www.metaweather.com/api/location/${woeid}/`
+    );
+    if (!response.ok) {
+      throw new Error("Something went wrong!");
+    }
+    const responseData = await response.json();
+    // console.log(responseData);
+    const cityData = responseData.title;
+    console.log(cityData);
+
+    const weatherData = responseData.consolidated_weather.map((weatherData) => {
+      return {
+        weather: weatherData.weather_state_name,
+        minTemp: weatherData.min_temp,
+        maxTemp: weatherData.max_temp,
+        averageTemp: weatherData.the_temp,
+        date: weatherData.applicable_date,
+        key: weatherData.id,
+        windSpeed: weatherData.wind_speed,
+        humidity: weatherData.humidity,
+        visibility: weatherData.visibility,
+        airpressure: weatherData.air_pressure,
+      };
+    });
+
+    setWeather(weatherData);
+    setCity(cityData);
+    setIsLoading(false);
+    arr = [...weatherData];
+    arr.shift();
+    setFutureWeather(arr);
+
+    return "success";
+  };
+
+  const fetchLocationFromInput = async (input) => {
+    const response = await fetch(
+      `https://www.metaweather.com/api/location/search/?query=${input}`
+    );
+    if (!response.ok) {
+      throw new Error("Something went wrong!");
+    }
+    const responseData = await response.json();
+    const woeid = responseData[0]?.woeid;
+
+    const getWeather = await fetchWeather(woeid);
+    if (getWeather !== "success") {
+      throw new Error("Something went wrong");
+    }
+  };
+
+  //useEffect
   useEffect(() => {
     const fetchCurrentLocation = async () => {
       setIsLoading(true);
@@ -62,40 +116,6 @@ function App() {
       }
     };
 
-    const fetchWeather = async (woeid) => {
-      const response = await fetch(
-        `https://www.metaweather.com/api/location/${woeid}/`
-      );
-      if (!response.ok) {
-        throw new Error("Something went wrong!");
-      }
-      const responseData = await response.json();
-      // console.log(responseData);
-      const cityData = responseData.title;
-
-      const weatherData = responseData.consolidated_weather.map(
-        (weatherData) => {
-          return {
-            weather: weatherData.weather_state_name,
-            minTemp: weatherData.min_temp,
-            maxTemp: weatherData.max_temp,
-            averageTemp: weatherData.the_temp,
-            date: weatherData.applicable_date,
-            key: weatherData.id,
-          };
-        }
-      );
-
-      setWeather(weatherData);
-      setCity(cityData);
-      setIsLoading(false);
-      arr = [...weatherData];
-      arr.shift();
-      setFutureWeather(arr);
-
-      return "success";
-    };
-
     fetchCurrentLocation();
 
     return () => {
@@ -107,10 +127,6 @@ function App() {
     let weatherUrl = `${weather[0]?.weather.split(" ").join("")}`;
     let url = `../assets/${weatherUrl}.png`;
     setSource(url);
-    let avgTemp = Math.round(weather[0]?.averageTemp);
-    setAvgTemp(avgTemp);
-    let weatherNow = weather[0]?.weather;
-    setWeatherNow(weatherNow);
   }, [weather]);
 
   return (
@@ -125,8 +141,9 @@ function App() {
               findCurrentLocationPromise={findCurrentLocationPromise}
               isLoading={isLoading}
               source={source}
-              avgTemp={avgTemp}
-              weatherNow={weatherNow}
+              input={input}
+              setInput={setInput}
+              fetchWeather={fetchLocationFromInput}
             />
           </Col>
         ) : (
@@ -135,10 +152,38 @@ function App() {
             <img src={loadingimage} />
           </Col>
         )}
-        <Col md={8} sm={8} className="second">
-          <WeatherBox futureWeather={futureWeather} />
-          <div className="title-highlights">Today's Highlights</div>
-        </Col>
+        {!isLoading && (
+          <Col md={8} sm={8} className="second">
+            <WeatherBox futureWeather={futureWeather} />
+            <div className="title-highlights">Today's Highlights</div>
+            <Row className="highlights">
+              <TodaysHighlights
+                title="Wind Status"
+                number={`${Math.round(weather[0]?.windSpeed)}mph`}
+              />
+              <TodaysHighlights
+                title="Humidity"
+                number={`${Math.round(weather[0]?.humidity)}%`}
+                progressBar={
+                  <ProgressBar
+                    now={Math.round(weather[0]?.humidity)}
+                    variant={"color"}
+                  />
+                }
+              />
+            </Row>
+            <Row className="highlights_sm">
+              <TodaysHighlights
+                title="Visibility"
+                number={`${weather[0]?.visibility.toFixed(1)} miles`}
+              />
+              <TodaysHighlights
+                title="Air pressure"
+                number={`${weather[0]?.airpressure} mb`}
+              />
+            </Row>
+          </Col>
+        )}
       </Row>
     </Container>
   );

@@ -1,5 +1,5 @@
 .container {
-  /* height: 100vh; */
+  height: 1023px;
   position: relative;
   padding: 0px;
   color: white;
@@ -50,14 +50,16 @@
 }
 
 .temp {
-  position: relative;
+  /* position: relative; */
+  display: flex;
+  justify-content: center;
   font-style: normal;
   font-weight: 500;
   font-size: 144px;
   line-height: 169px;
   color: #e7e7eb;
   margin-top: 87px;
-  margin-left: 150px;
+  /* margin-left: 150px; */
   font-family: "Raleway", sans-serif;
 }
 

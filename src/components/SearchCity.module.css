@@ -1,0 +1,40 @@
+.x {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.x button {
+  margin-top: 19px;
+  margin-right: 19px;
+  color: #e7e7eb;
+  background-color: #1e213a;
+  border: none;
+}
+
+.container {
+  height: 1023px;
+  position: relative;
+  padding: 0px;
+  color: white;
+  background-color: #1e213a;
+}
+
+.inputContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.input {
+  color: #616475 !important;
+  border: solid 1px #e7e7eb;
+}
+
+.icon {
+  color: #616475;
+}
+
+.btn {
+  background-color: #3c47e9;
+  border-radius: 0;
+  margin-left: 10px;
+}

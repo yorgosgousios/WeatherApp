@@ -86,3 +86,24 @@ body {
 .second {
   padding: 0;
 }
+
+.highlights {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  margin-top: 32px;
+}
+.highlights_sm {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  margin-top: 32px;
+}
+
+.bg-color {
+  background-color: #ffec65;
+}
+
+.progress {
+  height: 8px;
+}
