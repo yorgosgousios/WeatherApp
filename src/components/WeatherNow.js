@@ -10,7 +10,7 @@ const WeatherNow = (props) => {
   // console.log("weathernow running");
   const locationHandler = () => {
     props.findCurrentLocationPromise();
-    console.log(props.city);
+    props.fetchCurrentLocation();
   };
 
   const buttonHandler = () => {

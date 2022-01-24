@@ -1,5 +1,5 @@
 import "./App.css";
-import { Container, Row, Col, ProgressBar } from "react-bootstrap";
+import { Container, Row, Col, ProgressBar, Spinner } from "react-bootstrap";
 import WeatherNow from "./components/WeatherNow";
 import { useState, useEffect } from "react";
 
@@ -96,30 +96,31 @@ function App() {
     }
   };
 
+  const fetchCurrentLocation = async () => {
+    setIsLoading(true);
+    const response = await fetch(
+      `https://www.metaweather.com/api/location/search/?lattlong=${coords.lat},${coords.lon}`
+    );
+    // console.log("fetchcurrentlocation");
+    if (!response.ok) {
+      throw new Error("Something went wrong!");
+    }
+    const responseData = await response.json();
+
+    const woeid = responseData[0].woeid;
+    const getWeather = await fetchWeather(woeid);
+    if (getWeather !== "success") {
+      throw new Error("Something went wrong");
+    }
+  };
+
   //useEffect
   useEffect(() => {
-    const fetchCurrentLocation = async () => {
-      setIsLoading(true);
-      const response = await fetch(
-        `https://www.metaweather.com/api/location/search/?lattlong=${coords.lat},${coords.lon}`
-      );
-      // console.log("fetchcurrentlocation");
-      if (!response.ok) {
-        throw new Error("Something went wrong!");
-      }
-      const responseData = await response.json();
-
-      const woeid = responseData[0].woeid;
-      const getWeather = await fetchWeather(woeid);
-      if (getWeather !== "success") {
-        throw new Error("Something went wrong");
-      }
-    };
-
+    let abortController = new AbortController();
     fetchCurrentLocation();
 
     return () => {
-      // setTime(false);
+      abortController.abort();
     };
   }, [coords]);
 
@@ -144,10 +145,15 @@ function App() {
               input={input}
               setInput={setInput}
               fetchWeather={fetchLocationFromInput}
+              fetchCurrentLocation={fetchCurrentLocation}
             />
           </Col>
         ) : (
           <Col md={12} className="intro">
+            <div className="loadingContainer">
+              <Spinner animation="border" role="status" className="spinner" />
+            </div>
+
             <h1>Weather Forecast</h1>
             <img src={loadingimage} />
           </Col>

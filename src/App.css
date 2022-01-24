@@ -107,3 +107,13 @@ body {
 .progress {
   height: 8px;
 }
+
+.spinner {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+}
