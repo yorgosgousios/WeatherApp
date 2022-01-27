@@ -6,4 +6,16 @@
   background-color: #1e213a;
   width: 120px;
   height: 177px;
+  display: flex;
+  justify-content: center;
+}
+
+.weather {
+  text-align: center;
+}
+
+.content {
+  display: flex;
+  justify-content: center;
+  height: fit-content;
 }

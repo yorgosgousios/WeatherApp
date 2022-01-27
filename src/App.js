@@ -8,8 +8,6 @@ import WeatherBox from "./components/WeatherBox";
 import TodaysHighlights from "./components/TodaysHighlights";
 
 function App() {
-  //states and variables
-  // console.log("App running");
   const [weather, setWeather] = useState([]);
   const [futureWeather, setFutureWeather] = useState([]);
   const [city, setCity] = useState("");
@@ -20,28 +18,34 @@ function App() {
     lat: null,
   });
   const [input, setInput] = useState("");
+  const [initialLocationCalculated, setInitialLocationCalculated] = useState(
+    false
+  );
 
   let arr = [];
 
   //methods and promises
-  const findCurrentLocationPromise = () => {
-    return new Promise((resolve) => {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const longitude = position.coords.longitude;
-          const latitude = position.coords.latitude;
+  const getCoordsFromPosition = () => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const longitude = position.coords.longitude;
+        const latitude = position.coords.latitude;
+        if (longitude !== null && latitude !== null) {
           setCoords({ lon: longitude, lat: latitude });
-        },
-        () => {
-          alert("Could not get your location");
+          setInitialLocationCalculated(true);
         }
-      );
-      if (navigator.geolocation) {
-        resolve("success");
+      },
+      () => {
+        alert("Could not get your location");
       }
-    });
+    );
   };
-  findCurrentLocationPromise();
+
+  const findCurrentLocationPromise = () => {
+    if (navigator.geolocation) {
+      return getCoordsFromPosition();
+    }
+  };
 
   const fetchWeather = async (woeid) => {
     const response = await fetch(
@@ -53,7 +57,6 @@ function App() {
     const responseData = await response.json();
     // console.log(responseData);
     const cityData = responseData.title;
-    console.log(cityData);
 
     const weatherData = responseData.consolidated_weather.map((weatherData) => {
       return {
@@ -89,19 +92,20 @@ function App() {
     }
     const responseData = await response.json();
     const woeid = responseData[0]?.woeid;
-
-    const getWeather = await fetchWeather(woeid);
-    if (getWeather !== "success") {
-      throw new Error("Something went wrong");
+    if (!woeid) {
+      alert("City does not exist");
+    } else {
+      const getWeather = await fetchWeather(woeid);
+      if (getWeather !== "success") {
+        throw new Error("Something went wrong");
+      }
     }
   };
 
   const fetchCurrentLocation = async () => {
-    setIsLoading(true);
     const response = await fetch(
       `https://www.metaweather.com/api/location/search/?lattlong=${coords.lat},${coords.lon}`
     );
-    // console.log("fetchcurrentlocation");
     if (!response.ok) {
       throw new Error("Something went wrong!");
     }
@@ -113,18 +117,21 @@ function App() {
       throw new Error("Something went wrong");
     }
   };
-
-  //useEffect
   useEffect(() => {
-    let abortController = new AbortController();
-    fetchCurrentLocation();
-
-    return () => {
-      abortController.abort();
-    };
-  }, [coords]);
+    setIsLoading(true);
+    findCurrentLocationPromise();
+    console.log("useEffect no.1");
+  }, []);
 
   useEffect(() => {
+    if (!!coords && coords.lat !== null && coords.lon !== null)
+      fetchCurrentLocation();
+
+    console.log("useEffect no.2");
+  }, [initialLocationCalculated]);
+
+  useEffect(() => {
+    console.log("useEffect no.3");
     let weatherUrl = `${weather[0]?.weather.split(" ").join("")}`;
     let url = `../assets/${weatherUrl}.png`;
     setSource(url);

@@ -117,3 +117,8 @@ body {
   display: flex;
   justify-content: center;
 }
+
+.temps {
+  display: flex;
+  justify-content: space-around;
+}

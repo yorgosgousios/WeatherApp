@@ -3,6 +3,7 @@
   position: relative;
   padding: 0px;
   color: white;
+  /* display: flex; */
 }
 
 .container::before {
